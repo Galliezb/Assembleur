@@ -1,0 +1,74 @@
+;* Projet : Labo XXX *
+;************************************************************************
+;* Nom de fichier: Labo XXX *
+;* Date: XX-XX-XXXX *
+;* *
+;* Auteur: YY *
+;* Haute Ecole Louvain en Hainaut *
+;************************************************************************
+;* Fichiers nécessaires: aucun *
+;************************************************************************
+;* Notes: *
+;************************************************************************
+    list p=16F887, f=INHX8M ; directive pour definir le processeur
+    list c=90, n=60 ; directives pour le listing
+#include <p16F887.inc> ; incorporation variables spécifiques
+    errorlevel -302 ; pas d'avertissements de bank
+    errorlevel -305 ; pas d'avertissements de fdest
+
+    __CONFIG _CONFIG1, _LVP_OFF & _WDT_OFF & _INTOSCIO
+    __CONFIG _CONFIG2, _IESO_OFF & _FCMEN_OFF
+
+;*************************************************************************
+;* Définitions et Variables *
+;*************************************************************************
+    cblock 0x020
+;LOOP,TOGGLEOFF,TOGGLEON,TOGGLE;ici vous pouvez faire vos déclarations de variables
+    endc
+
+;*************************************************************************
+;* Programme principal *
+;*************************************************************************
+    ORG 0x000 ; vecteur reset
+
+START
+    CLRF STATUS	    ; INIT
+    BSF STATUS,5    ; select bank 1
+    CLRF TRISA	    ; PortA = output (0)
+    CLRF TRISC	    ; 
+    COMF TRISC	    ; PortC = input (1)
+    
+    BSF STATUS,6    ; select bank 3
+    CLRF ANSEL	    ; digital input
+    CLRF STATUS	    ; SELECT BANK 0 
+    CLRF PORTA	    ; init PORTA
+    CLRF PORTC	    ; init PORTC (éviter le bruit)
+    
+   
+LOOPOFF
+    BTFSS PORTC,0   ; si enfoncé (0)...
+    GOTO TOGGLEON   ; (1)    ... je allume
+			;BTFSC PORTC,0   ; si pas enfoncé (1)
+			;GOTO TOGGLEOFF   ;       ... Réteindre
+    GOTO LOOPOFF    ; (1) sinon je re-monitor
+    
+LOOPON
+    BTFSS PORTC,0   ; si enfoncé (0)...
+    GOTO TOGGLEOFF  ; (0)	    ... éteindre
+		        ;BTFSC PORTC,0   ; si pas enfoncé (1)
+			;GOTO TOGGLEON   ; (1)      ... je rallume
+    GOTO LOOPON     ; (1) sinon on re-monitor 
+    
+TOGGLEON
+    BSF PORTA,1	    ; allumer (1)
+    BTFSC PORTC,0   ; si bouton toujours enfoncé ...
+    GOTO LOOPON	    ; (1)	sinon retourner au monitorage
+    GOTO TOGGLEON   ; (0)   ... on attend
+    
+TOGGLEOFF
+    BCF PORTA,1	    ; éteindre (0)
+    BTFSC PORTC,0   ; si bouton toujours enfoncé  ...
+    GOTO LOOPOFF    ; (1)	 sinon retourner au monitorage
+    GOTO TOGGLEOFF  ; (0)    ... on attend
+
+    END
