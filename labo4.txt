@@ -188,66 +188,47 @@ TESTFORDIGITAL
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'11100000'   ; W - 225 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD9       ; volume = 9
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT9       ; volume = 9
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'11001001'   ; W - 200 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD8       ; volume = 8
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT8       ; volume = 8
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'10101110'   ; W - 175 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD7       ; volume = 7
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT7       ; volume = 7
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'10010111'   ; W - 150 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD6       ; volume = 6
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT6       ; volume = 6
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'01111100'   ; W - 125 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD5       ; volume = 5
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT5       ; volume = 5
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'01100101'   ; W - 100 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD4       ; volume = 4
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT4       ; volume = 4
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'01001010'   ; W - 75 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD3       ; volume = 3
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT3       ; volume = 3
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'00110011'   ; W - 50 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD2       ; volume = 2
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
+    GOTO RESULT2       ; volume = 2
 
     MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
     SUBLW B'00011000'   ; W - 25 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0  ; si W > L on skip
-    MOVLW AD1       ; volume = 1
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO AFFICHER   ; go afficher
-
+    GOTO RESULT       ; volume = 1
 
     MOVLW AD0       ; par défaut, volume = 0
     GOTO AFFICHER   ; go afficher
@@ -257,40 +238,31 @@ TESTFORDIGITAL
 
 RESULT
     MOVLW AD1
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT2
     MOVLW AD2
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT3
     MOVLW AD3
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT4
     MOVLW AD4
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT5
     MOVLW AD5
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT6
     MOVLW AD6
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT7
     MOVLW AD7
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT8
     MOVLW AD8
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 RESULT9
     MOVLW AD9
-    MOVWF PORTA
-    GOTO GETANAL
+    GOTO AFFICHER
 
 AFFICHER
     BANKSEL PORTA   ; selection bank PORTA
@@ -304,4 +276,4 @@ DELAY
     DECFSZ tempo1,1 ; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
     GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
     RETURN          ; retourne et continue après le call qui t'as envoyé ici
-END         ; FIN PROGRAMME
+END                 ; FIN PROGRAMME
