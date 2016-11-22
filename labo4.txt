@@ -130,45 +130,45 @@ TESTFORDIGITAL
     ;****************************
     MOVF ADRESH,1	; Envoi l'état analogique du potentiometre dans W
     
-    MOVLW B'00000001'	; par défaut, volume = 0
+    MOVLW AD0		; par défaut, volume = 0
     
     SUBLW B'00011000'	; W - 25 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00000010'	; volume = 1
+    MOVLW AD1		; volume = 1
     
     SUBLW B'00110011'	; W - 50 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00000011'	; volume = 2
+    MOVLW AD2		; volume = 2
     
     SUBLW B'01001010'	; W - 75 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00000100'	; volume = 3
+    MOVLW AD3		; volume = 3
     
     SUBLW B'01100101'	; W - 100 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip 
-    MOVLW B'00000101'	; volume = 4
+    MOVLW AD4		; volume = 4
     
     SUBLW B'01111100'	; W - 125 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00000110'	; volume = 5
+    MOVLW AD5		; volume = 5
     
     SUBLW B'10010111'	; W - 150 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00000111'   ; volume = 6
+    MOVLW AD6	   ; volume = 6
     
     SUBLW B'10101110'	; W - 175 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00001000'	; volume = 7
+    MOVLW AD7		; volume = 7
     
     SUBLW B'11001001'	; W - 200 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00001001'	; volume = 8
+    MOVLW AD8		; volume = 8
     
     SUBLW B'11100000'	; W - 225 => STATUS,0 contiend 0 si W > L et 1 si W <= L
     BTFSS STATUS,0	; si W <= L on skip
-    MOVLW B'00001010'	; volume = 9
+    MOVLW AD9		; volume = 9
     
-    CALL TABLEDIGITAL	; renvoi la config pour PORTA dans le W    
+    ;CALL TABLEDIGITAL	; renvoi la config pour PORTA dans le W    
     GOTO AFFICHER	; go afficher
 
 
