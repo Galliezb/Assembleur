@@ -113,7 +113,7 @@ GETANAL
     ;****************************
     ;*      A FAIRE     *
     ;****************************
-    BCF jumper,0    ; test code khaim
+    BSF jumper,0    ; test code khaim
 
     BSF ADCON0,1    ; SET GO -> Start conversion
     BTFSC ADCON0,1  ; Is conversion done ?
@@ -121,9 +121,10 @@ GETANAL
     MOVF ADRESH,0   ; Lecture de la valeur en analogique
     MOVWF result    ; Stock la valeur dans une variable && AUTISME KHAIM
 
-    BTFSS jumper,0
-    GOTO TESTFORDIGITAL
-    GOTO GETANAL
+    CLRF PORTA
+    ;BTFSS jumper,0
+    ;GOTO TESTFORDIGITAL
+    GOTO SHOWBIT
 
 
 
@@ -134,10 +135,14 @@ SHOWBIT
     BTFSC result,6  ; 01X ?
     GOTO SHOWBIT01X ;   OUI
     BTFSC result,5  ; 001 ?
-    BSF PORTA,6     ;   OUI XX-- ----
+    GOTO $+4        ;   OUI XX-- ----
             ;   NON : 000
-    BSF PORTA,7     ; X--- ----
+    BTFSC result,4
+    BSF PORTA,7
     GOTO GETANAL    ;
+    MOVLW 0xc0
+    MOVWF PORTA
+    GOTO GETANAL
 
 SHOWBIT01X
     BTFSC result,5  ; 011 ?
@@ -320,4 +325,4 @@ WAITBUTTONSWITCHJUMPER
     DECFSZ tempo1,1 ; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
     GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800s soit 0.2ms
     RETURN          ; retourne et continue après le call qui t'as envoyé ici
-    END             ; FIN PROGRAMME
+END         ; FIN PROGRAMME
