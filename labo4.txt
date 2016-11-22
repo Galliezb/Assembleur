@@ -81,7 +81,7 @@ START
     BSF ANSEL,1     ; mettre en analog
     MOVLW B'00000001'   ; on met 0 dans W
     MOVWF jumper    ; init Jumper sur afficheur digital
-
+    GOTO CONFDIGITAL
 
 MAINLOOP
     ;BTFSC jumper   ; si jumper = 1, on est en mode affichage DIGITAL
@@ -96,9 +96,7 @@ TESTFORLED
 
     GOTO MAINLOOP ;
 
-
-; CODE BRUNO
-TESTFORDIGITAL
+CONFDIGITAL
     BANKSEL ADCON1 ; selectionne la banque d'ADCON1
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
@@ -122,6 +120,8 @@ TESTFORDIGITAL
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
+; CODE BRUNO
+TESTFORDIGITAL
     BSF ADCON0,1    ; On commence la conversion
     BTFSC ADCON0,1  ; La convertion est-elle faite ?
     GOTO $-1        ; conversion pas fini, on attends
@@ -142,57 +142,57 @@ TESTFORDIGITAL
     MOVLW AD8		; volume = 8
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-    
+
     MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     SUBLW B'10101110'	; W - 175 => STATUS,0 contiend 0 si W > L et 1 si W > L
     BTFSS STATUS,0	; si W > L on skip
     MOVLW AD7		; volume = 7
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-    
+
     MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     SUBLW B'10010111'	; W - 150 => STATUS,0 contiend 0 si W > L et 1 si W > L
     BTFSS STATUS,0	; si W > L on skip
     MOVLW AD6		; volume = 6
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-    
+
     MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     SUBLW B'01111100'	; W - 125 => STATUS,0 contiend 0 si W > L et 1 si W > L
     BTFSS STATUS,0	; si W > L on skip
     MOVLW AD5		; volume = 5
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-    
+
     MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     SUBLW B'01100101'	; W - 100 => STATUS,0 contiend 0 si W > L et 1 si W > L
-    BTFSS STATUS,0	; si W > L on skip 
+    BTFSS STATUS,0	; si W > L on skip
     MOVLW AD4		; volume = 4
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-    
+
     MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     SUBLW B'01001010'	; W - 75 => STATUS,0 contiend 0 si W > L et 1 si W > L
     BTFSS STATUS,0	; si W > L on skip
     MOVLW AD3		; volume = 3
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-    
+
     MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     SUBLW B'00110011'	; W - 50 => STATUS,0 contiend 0 si W > L et 1 si W > L
     BTFSS STATUS,0	; si W > L on skip
     MOVLW AD2		; volume = 2
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-    
+
     MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     SUBLW B'00011000'	; W - 25 => STATUS,0 contiend 0 si W > L et 1 si W > L
     BTFSS STATUS,0	; si W > L on skip
     MOVLW AD1		; volume = 1
     BTFSS STATUS,0	; si W > L on skip
     GOTO AFFICHER	; go afficher
-      
-    
+
+
     MOVLW AD0		; par défaut, volume = 0
     GOTO AFFICHER	; go afficher
 
