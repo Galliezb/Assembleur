@@ -292,20 +292,6 @@ RESULT9
     MOVWF PORTA
     GOTO GETANAL
 
-
-TABLEDIGITAL
-    ADDWF PCL,1     ; ajoute W au PCL ( et stock dans PCL )
-    RETLW AD0       ; W = 0 pour PORTA ( affichage digital )
-    RETLW AD1       ; W = 1 pour PORTA ( affichage digital )
-    RETLW AD2       ; W = 2 pour PORTA ( affichage digital )
-    RETLW AD3       ; W = 3 pour PORTA ( affichage digital )
-    RETLW AD4       ; W = 4 pour PORTA ( affichage digital )
-    RETLW AD5       ; W = 5 pour PORTA ( affichage digital )
-    RETLW AD6       ; W = 6 pour PORTA ( affichage digital )
-    RETLW AD7       ; W = 7 pour PORTA ( affichage digital )
-    RETLW AD8       ; W = 8 pour PORTA ( affichage digital )
-    RETLW AD9       ; W = 9 pour PORTA ( affichage digital )
-
 AFFICHER
     BANKSEL PORTA   ; selection bank PORTA
     CLRF PORTA      ; on s'assure que tout est éteind
