@@ -122,14 +122,14 @@ TESTFORDIGITAL
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
-    BSF ADCON0,GO	; On commence la conversion
-    BTFSC ADCON0,GO	; La convertion est-elle faite ?
+    BSF ADCON0,1	; On commence la conversion
+    BTFSC ADCON0,1	; La convertion est-elle faite ?
     GOTO $-1		; conversion pas fini, on attends
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
     BANKSEL ADRESH	; on sélectionne la bank ADRESH
-    MOVF ADRESH,W	; Envoi l'état analogique du potentiometre dans W
+    MOVF ADRESH,1	; Envoi l'état analogique du potentiometre dans W
     
     MOVLW B'00000001'	; par défaut, volume = 0
     
