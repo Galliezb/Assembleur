@@ -304,11 +304,4 @@ DELAY
     DECFSZ tempo1,1 ; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
     GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
     RETURN          ; retourne et continue après le call qui t'as envoyé ici
-
-WAITBUTTONSWITCHJUMPER
-    MOVLW 0xFF      ; stock 1111 1111 dans le registre de travail
-    MOVWF tempo1    ; envoi le W dans la variable tempo1
-    DECFSZ tempo1,1 ; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
-    GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800s soit 0.2ms
-    RETURN          ; retourne et continue après le call qui t'as envoyé ici
 END         ; FIN PROGRAMME
