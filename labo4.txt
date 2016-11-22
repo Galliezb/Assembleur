@@ -128,7 +128,7 @@ TESTFORDIGITAL
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
-    MOVF ADRESH,1	; Envoi l'état analogique du potentiometre dans W
+    MOVF ADRESH,0	; Envoi l'état analogique du potentiometre dans W
     
     MOVLW AD0		; par défaut, volume = 0
     
