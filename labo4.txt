@@ -128,7 +128,6 @@ TESTFORDIGITAL
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
-    BANKSEL ADRESH	; on sélectionne la bank ADRESH
     MOVF ADRESH,1	; Envoi l'état analogique du potentiometre dans W
     
     MOVLW B'00000001'	; par défaut, volume = 0
