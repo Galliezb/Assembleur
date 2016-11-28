@@ -53,7 +53,7 @@ tempo1,tempo2,jumper,result;ici vous pouvez faire vos déclarations de variables
 START
     BANKSEL TRISA   ; Selectione la banque ou TRISA se trouve
     CLRF TRISA      ; mettre le port A en OUTPUT
-    BSF TRISC,3         ; On met le bouton 3 ( celui de gauche ) en INPUT
+    BSF TRISC,0         ; On met le bouton 3 ( celui de gauche ) en INPUT
     BANKSEL ANSEL   ; select bank 4
     BSF ANSEL,1     ; mettre en analog
     MOVLW B'00000001'   ; on met 0 dans W
@@ -82,21 +82,21 @@ CONFDIGITAL
     MOVWF ADCON0    ;on mets W dans ADCON0
     CALL DELAY      ; Tempo d'attente
     CLRF jumper
-    BSF jumper,0
+
+    ;BSF jumper,0
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
 
 
 GETANAL
-    CALL JUMP
-
     BSF ADCON0,1    ; SET GO -> Start conversion
     BTFSC ADCON0,1  ; Is conversion done ?
     GOTO $-1        ;   NO > test again
     MOVF ADRESH,0   ; Lecture de la valeur en analogique
     MOVWF result    ; Stock la valeur dans une variable && AUTISME KHAIM
 
+    CALL JUMP
     CLRF PORTA
     BTFSS jumper,0
     GOTO TESTFORDIGITAL
@@ -235,11 +235,16 @@ RESULT9
     GOTO AFFICHER
 
 JUMP
-    BTFSS PORTC,3
-    COMF jumper,1
+    BTFSS PORTC,0
+    CALL TOGGLE
     CALL DELAY
-    BTFSS PORTC,3
+    BTFSS PORTC,0
     GOTO $-2
+    RETURN
+TOGGLE
+    MOVF jumper,0
+    XORLW 0xFF
+    MOVWF jumper
     RETURN
 
 AFFICHER
