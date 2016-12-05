@@ -99,6 +99,7 @@ GETANAL
     CALL JUMP
     CLRF PORTA
     BTFSS jumper,0
+    GOTO SHOWBIT
     GOTO TESTFORDIGITAL
 
 ; CODE KAHIM
@@ -148,12 +149,13 @@ SHOWBIT11X
     GOTO GETANAL
     MOVLW 0xff      ; 111
     MOVWF PORTA
+    GOTO GETANAL
 
 ; CODE BRUNO
 TESTFORDIGITAL
-    BSF ADCON0,1    ; On commence la conversion
-    BTFSC ADCON0,1  ; La convertion est-elle faite ?
-    GOTO $-1        ; conversion pas fini, on attends
+    ;BSF ADCON0,1    ; On commence la conversion
+    ;BTFSC ADCON0,1  ; La convertion est-elle faite ?
+    ;GOTO $-1        ; conversion pas fini, on attends
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
@@ -261,12 +263,5 @@ DELAY
     GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
     RETURN          ; retourne et continue après le call qui t'as envoyé ici
 
-WAIT
-    MOVLW 0xE0      ; stock 1110 0000 dans le registre de travail
-    MOVWF tempo2    ; envoi le W dans la variable tempo2
-    CALL DELAY      ; attendre 0.2 ms
-    DECFSZ tempo2,1 ; décremente tempo1 et stock dans tempo2, skip la ligne suivante si 0
-    GOTO $-1        ; reviens à la ligne précédente soit 128*0.2ms = 25,6ms
-    RETURN          ; retourne et continue après le call qui t'as envoyé ici
 
     END         ; FIN PROGRAMME
