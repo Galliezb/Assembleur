@@ -22,11 +22,14 @@
 ;*************************************************************************
 ;* Définitions *
 ;*************************************************************************
-#DEFINE ETAT1 0x00 ; sans son
-#DEFINE ETAT1 0x01 ; son 1 ( dec 1 )
-#DEFINE ETAT2 0x05 ; son 4 ( dec 20 )
-#DEFINE ETAT3 0x0F ; son 6 ( dec 80 )
-#DEFINE ETAT4 0x1F ; son 8 ( dec 256 )
+;#DEFINE ETAT1 0x01 ; son 1 ( dec 1 )
+;#DEFINE ETAT2 0x05 ; son 4 ( dec 20 )
+;#DEFINE ETAT3 0x0F ; son 6 ( dec 80 )
+;#DEFINE ETAT4 0x1F ; son 8 ( dec 256 )
+#DEFINE ETAT0 0x29 ; son 1 ( dec 32 )
+#DEFINE ETAT1 0x49 ; son 4 ( dec 80 )
+#DEFINE ETAT2 0x69 ; son 6 ( dec 128 )
+#DEFINE ETAT3 0xc0 ; son 8 ( dec 192 )
 
     cblock 0x020
 ;*************************************************************************
@@ -58,52 +61,57 @@ START
     GOTO LOOP		; go to hein
 
 LOOP
-    BSF PORTC,5		  ; Allume le son
-    BSF PORTA,0		  ; Allume la led 0 pour vérification
-    CALL DELAY		  ; appelle la sous routine delay
-    CALL ALLBUTTON
-    
-    MOVFW delay1
-    MOVWF PORTA
-    
-    BCF PORTC,5		  ; coupe le son
-    BCF PORTA,0		  ; etined la led 0 pour vérification
-    CALL DELAY		  ; cree un timer de delayrisation
+    CALL BUTTON0
     GOTO LOOP
     
-ALLBUTTON
+BUTTON0
+    
     BTFSC PORTC,0       ; si le bouton 0 est PAS enfoncé, on skip
     GOTO $+6
-    MOVLW ETAT1		; envoi 256 dans W
+    MOVLW ETAT0		; envoi ETAT1 dans W
     MOVWF tmpdelay	; envoi W dans
     CALL TEMPO		; wait relache
     BTFSS PORTC,0	; bouton 0 enfoncé
     GOTO $-2		; retour en arrière
+    GOTO BUTTON1
     
+BUTTON1    
     BTFSC PORTC,1       ; si le bouton 0 est PAS enfoncé, on skip
     GOTO $+6
-    MOVLW ETAT2		; envoi 256 dans W
+    MOVLW ETAT1		; envoi ETAT2 dans W
     MOVWF tmpdelay	; envoi W dans
     CALL TEMPO		; wait relache
     BTFSS PORTC,1	; bouton 0 enfoncé
     GOTO $-2		; retour en arrière
-    
+    GOTO BUTTON2
+
+BUTTON2    
     BTFSC PORTC,2       ; si le bouton 0 est PAS enfoncé, on skip 
     GOTO $+6
-    MOVLW ETAT3		; envoi 256 dans W
+    MOVLW ETAT2		; envoi ETAT3 dans W
     MOVWF tmpdelay	; envoi W dans
     CALL TEMPO		; wait relache
     BTFSS PORTC,2	; bouton 0 enfoncé
     GOTO $-2		; retour en arrière
-    
+    GOTO BUTTON3
+
+BUTTON3
     BTFSC PORTC,3       ; si le bouton 0 est PAS enfoncé, on skip
     GOTO $+6
-    MOVLW ETAT4		; envoi 256 dans W
+    MOVLW ETAT3		; envoi ETAT4 dans W
     MOVWF tmpdelay	; envoi W dans
     CALL TEMPO		; wait relache
     BTFSS PORTC,3	; bouton 0 enfoncé
     GOTO $-2		; retour en arrière
-    
+    RETURN
+
+ALLUMESON
+    BSF PORTC,5		  ; Allume le son
+    BSF PORTA,0		  ; Allume la led 0 pour vérification
+    CALL DELAY		  ; appelle la sous routine delay
+    BCF PORTC,5		  ; coupe le son
+    BCF PORTA,0		  ; etined la led 0 pour vérification
+    CALL DELAY		  ; cree un timer de delayrisation
     RETURN
     
 DELAY
@@ -115,8 +123,9 @@ DELAY
 TEMPO
     MOVLW 0xFF		; stock 1111 1111 dans le registre de travail
     MOVWF tempo		; envoi le W dans la variable delay1
+    CALL ALLUMESON	; sous routine de fréquence du son
     DECFSZ tempo,1	; décremente delay1 et stock dans delay1, skip la ligne suivante si 0
-    GOTO $-1		; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
+    GOTO $-2		; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
     RETURN		; retourne et continue après le call qui t'as envoyé ici
 
     END         ; FIN PROGRAMME
