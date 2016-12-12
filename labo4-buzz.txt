@@ -26,9 +26,9 @@
 ;*************************************************************************
 ;* Variables *
 ;*************************************************************************
-tempo1,tempo2,stock1,result;ici vous pouvez faire vos déclarations de variables
+tempo1,tempo2,stock1,test1,test2,test3,test4;ici vous pouvez faire vos déclarations de variables
     ; tempo1 = variable pour faire de la temporisation
-    ; tempo 2 = variable pour multiplier la temporisation
+    ; tempo 2 = variable pour multiplier la temporisation 
     ; jumper = définit l'état du jumper
     ;       0 = jumper configuré sur LED
     ;       1 = jumper configuré sur affichage digital
@@ -41,71 +41,113 @@ tempo1,tempo2,stock1,result;ici vous pouvez faire vos déclarations de variables
 
 
 START
-    BANKSEL TRISA   ; Selectione la banque ou TRISA se trouve
-    CLRF TRISA      ; mettre le port A en OUTPUT
+    BANKSEL TRISA	; Selectione la banque ou TRISA se trouve
+    CLRF TRISA		; mettre le port A en OUTPUT
     BSF TRISC,0         ; On met le bouton 0 ( celui de droite ) en INPUT
     BSF TRISC,1         ; On met le bouton 1 en INPUT
-    BANKSEL ANSEL   ; select bank 4
-    BSF ANSEL,1     ; mettre en analog
-    BANKSEL TRISC   ; selectionne bank TRISD
-    BCF TRISC,5     ; 0 = ouptut pour le buffer
-    BANKSEL PORTA   ; select bank 0
-    CLRF PORTA      ; eteind les leds
+    BANKSEL ANSEL	; select bank 4
+    BSF ANSEL,1		; mettre en analog
+    BANKSEL TRISC	; selectionne bank TRISD
+    BCF TRISC,5		; 0 = ouptut pour le buffer
+    BANKSEL PORTA	; select bank 0
+    CLRF PORTA		; eteind les leds
     MOVLW b'000000001'  ; met 0000 0000 dans W
     MOVWF stock1        ; mets W dans stock1
-    ;MOVLW b'000001111' ; envoi le 0000 1111 dans W
-    GOTO LOOP       ; go to hein
+    MOVLW b'11111111'  ; met 0000 0000 dans W
+    MOVWF test1         ; mets W dans test1
+    MOVLW b'01000000'  ; met 0000 0000 dans W
+    MOVWF test2         ; mets W dans test2
+    MOVLW b'00100000'  ; met 0000 0000 dans W
+    MOVWF test3         ; mets W dans test3
+    MOVLW b'00010000'  ; met 0000 0000 dans W
+    MOVWF test4         ; mets W dans test4
+    ;MOVLW b'000001111'	; envoi le 0000 1111 dans W
+    GOTO LOOP		; go to hein
 
 LOOP
-    BSF PORTC,5       ; Allume le son
-    BSF PORTA,0       ; Allume la led 0 pour vérification
-    CALL DELAY        ; appelle la sous routine delay
-    CALL BOUTONUP         ; appelle la sous routine boutonUP
-    CALL BOUTONDOWN       ; appelle la sous routine boutonDOWN
-
-    BCF PORTC,5       ; coupe le son
-    BCF PORTA,0       ; etined la led 0 pour vérification
-    CALL DELAY        ; cree un timer de temporisation
+    BSF PORTC,5		  ; Allume le son
+    BSF PORTA,0		  ; Allume la led 0 pour vérification
+    CALL DELAY		  ; appelle la sous routine delay
+    ;CALL BOUTONUP         ; appelle la sous routine boutonUP
+    ;CALL BOUTONDOWN       ; appelle la sous routine boutonDOWN
+    CALL ALLBUTTON
+    
+    BCF PORTC,5		  ; coupe le son
+    BCF PORTA,0		  ; etined la led 0 pour vérification
+    CALL DELAY		  ; cree un timer de temporisation
     GOTO LOOP
-
+    
 ;BOUTONUP
-;    BTFSC PORTC,0  ; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
+;    BTFSC PORTC,0	; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
 ;    GOTO $+3
 ;    ;INCFSZ stock1,1     ; allume la led
-;    MOVLW b'00000101'  ; ajoute +5 a chaque pression
-;    ADDWF stock1,1 ; on ajoute les +5 a stock1
-;    CALL TEMPO     ; appelle sous routine temp
-;    BTFSS PORTC,0  ; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
-;    GOTO $-2       ; on attend que le bouton est relaché
+;    MOVLW b'00000101'	; ajoute +5 a chaque pression
+;    ADDWF stock1,1	; on ajoute les +5 a stock1
+;    CALL TEMPO		; appelle sous routine temp
+;    BTFSS PORTC,0	; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
+;    GOTO $-2		; on attend que le bouton est relaché
 ;    RETURN
 ;
 ;BOUTONDOWN
-;    BTFSS PORTC,1  ; skip si non enfoncé
-;    ;DECFSZ stock1,1   ; decrement stock1 skip if 0
+;    BTFSS PORTC,1	; skip si non enfoncé
+;    ;DECFSZ stock1,1	; decrement stock1 skip if 0
 ;    GOTO $+3
-;    MOVLW b'00000101'  ; ajoute +5 a chaque pression
-;    SUBWF stock1,1 ; on ajoute les +5 a stock1
-;    CALL TEMPO     ; appelle sous routine temp
-;    BTFSS PORTC,1  ; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
-;    GOTO $-2       ; on attend que le bouton est relaché
+;    MOVLW b'00000101'	; ajoute +5 a chaque pression
+;    SUBWF stock1,1	; on ajoute les +5 a stock1
+;    CALL TEMPO		; appelle sous routine temp
+;    BTFSS PORTC,1	; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
+;    GOTO $-2		; on attend que le bouton est relaché
 ;    RETURN
 ALLBUTTON
-
+    BTFSC PORTC,0       ; si le bouton 0 est PAS enfoncé, on skip
+    GOTO $+6
+    MOVLW test1		; envoi 256 dans W
+    MOVWF tempo1	; envoi W dans
+    CALL TEMPO		; wait relache
+    BTFSS PORTC,0	; bouton 0 enfoncé
+    GOTO $-2		; retour en arrière
+    
+    BTFSC PORTC,1       ; si le bouton 0 est PAS enfoncé, on skip
+    GOTO $+6
+    MOVLW test2		; envoi 256 dans W
+    MOVWF tempo1	; envoi W dans
+    CALL TEMPO		; wait relache
+    BTFSS PORTC,1	; bouton 0 enfoncé
+    GOTO $-2		; retour en arrière
+    
+    BTFSC PORTC,2       ; si le bouton 0 est PAS enfoncé, on skip 
+    GOTO $+6
+    MOVLW test3		; envoi 256 dans W
+    MOVWF tempo1	; envoi W dans
+    CALL TEMPO		; wait relache
+    BTFSS PORTC,2	; bouton 0 enfoncé
+    GOTO $-2		; retour en arrière
+    
+    BTFSC PORTC,3       ; si le bouton 0 est PAS enfoncé, on skip
+    GOTO $+6
+    MOVLW test4		; envoi 256 dans W
+    MOVWF tempo1	; envoi W dans
+    CALL TEMPO		; wait relache
+    BTFSS PORTC,3	; bouton 0 enfoncé
+    GOTO $-2		; retour en arrière
+    
+    RETURN
+    
 DELAY
-    ;MOVLW stock1   ; multiplier de tempo1
-    ;MOVWF tempo2   ; envoi W dans tempo 2
-    MOVLW 0xFF      ; stock 1111 1111 dans le registre de travail
-    MOVWF tempo1    ; envoi le W dans la variable tempo1
-    DECFSZ tempo1,1 ; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
-    GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
-    ;DECFSZ tempo2,1    ; decrement tempo2 et skip a 0
-    ;GOTO $-5       ; W envoyé donne donc un multiple de 256*200ns
-    RETURN      ; retourne et continue après le call qui t'as envoyé ici
+    ;MOVLW stock1	; multiplier de tempo1
+    ;MOVWF tempo2	; envoi W dans tempo 2
+    MOVLW 0xFF		; stock 1111 1111 dans le registre de travail
+    MOVWF tempo1	; envoi le W dans la variable tempo1
+    DECFSZ tempo1,1	; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
+    GOTO $-1		; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
+    ;DECFSZ tempo2,1	; decrement tempo2 et skip a 0
+    ;GOTO $-5		; W envoyé donne donc un multiple de 256*200ns
+    RETURN		; retourne et continue après le call qui t'as envoyé ici
 TEMPO
-    MOVLW 0xFF      ; stock 1111 1111 dans le registre de travail
-    MOVWF tempo1    ; envoi le W dans la variable tempo1
-    DECFSZ tempo1,1 ; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
-    GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
-    RETURN      ; retourne et continue après le call qui t'as envoyé ici
+    MOVLW 0xFF		; stock 1111 1111 dans le registre de travail
+    MOVWF tempo1	; envoi le W dans la variable tempo1
+    DECFSZ tempo1,1	; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
+    GOTO $-1		; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
+    RETURN		; retourne et continue après le call qui t'as envoyé ici
 
     END         ; FIN PROGRAMME
