@@ -22,23 +22,13 @@
 ;*************************************************************************
 ;* Définitions *
 ;*************************************************************************
-#DEFINE AD0 b'01111101' ; configuration du PORTA afficheur digital sur 0
-#DEFINE AD1 b'00000101' ; configuration du PORTA afficheur digital sur 1
-#DEFINE AD2 b'01101011' ; configuration du PORTA afficheur digital sur 2
-#DEFINE AD3 b'00101111' ; configuration du PORTA afficheur digital sur 3
-#DEFINE AD4 b'00010111' ; configuration du PORTA afficheur digital sur 4
-#DEFINE AD5 b'00111110' ; configuration du PORTA afficheur digital sur 5
-#DEFINE AD6 b'01111110' ; configuration du PORTA afficheur digital sur 6
-#DEFINE AD7 b'00001101' ; configuration du PORTA afficheur digital sur 7
-#DEFINE AD8 b'01111111' ; configuration du PORTA afficheur digital sur 8
-#DEFINE AD9 b'00111111' ; configuration du PORTA afficheur digital sur 9
-#DEFINE ADE b'01011110' ; configuration du PORTA afficheur digital sur E pour erreur
     cblock 0x020
 ;*************************************************************************
 ;* Variables *
 ;*************************************************************************
-tempo1,tempo2,jumper,result;ici vous pouvez faire vos déclarations de variables
+tempo1,tempo2,stock1,result;ici vous pouvez faire vos déclarations de variables
     ; tempo1 = variable pour faire de la temporisation
+    ; tempo 2 = variable pour multiplier la temporisation 
     ; jumper = définit l'état du jumper
     ;       0 = jumper configuré sur LED
     ;       1 = jumper configuré sur affichage digital
@@ -51,217 +41,71 @@ tempo1,tempo2,jumper,result;ici vous pouvez faire vos déclarations de variables
 
 
 START
-    BANKSEL TRISA   ; Selectione la banque ou TRISA se trouve
-    CLRF TRISA      ; mettre le port A en OUTPUT
-    BSF TRISC,0         ; On met le bouton 3 ( celui de gauche ) en INPUT
-    BANKSEL ANSEL   ; select bank 4
-    BSF ANSEL,1     ; mettre en analog
-    MOVLW B'00000001'   ; on met 0 dans W
-    MOVWF jumper    ; init Jumper sur afficheur digital
-    ;GOTO CONFDIGITAL
+    BANKSEL TRISA	; Selectione la banque ou TRISA se trouve
+    CLRF TRISA		; mettre le port A en OUTPUT
+    BSF TRISC,0         ; On met le bouton 0 ( celui de droite ) en INPUT
+    BSF TRISC,1         ; On met le bouton 1 en INPUT
+    BANKSEL ANSEL	; select bank 4
+    BSF ANSEL,1		; mettre en analog
+    BANKSEL TRISC	; selectionne bank TRISD
+    BCF TRISC,5		; 0 = ouptut pour le buffer
+    BANKSEL PORTA	; select bank 0
+    CLRF PORTA		; eteind les leds
+    MOVLW b'000000001'  ; met 0000 0000 dans W
+    MOVWF stock1        ; mets W dans stock1
+    ;MOVLW b'000001111'	; envoi le 0000 1111 dans W
+    GOTO LOOP		; go to hein
 
-CONFDIGITAL
-    BANKSEL ADCON1 ; selectionne la banque d'ADCON1
-    ;****************************
-    ;* JUSTIFIER DANS LE RAPPORT*
-    ;****************************
-    MOVLW B'00000000'   ;Left justify
-    ;****************************
-    ;* JUSTIFIER DANS LE RAPPORT*
-    ;****************************
-    MOVWF ADCON1    ;Vdd and Vss comme tension de référence
-    BANKSEL TRISB   ; sélectionne le banque du TRISB
-    BSF TRISB,1         ;RB1 ( bouton potentiometrique ) en INPUT
-    BANKSEL ANSEL       ;On selectionne la banque ANSEL
-    BSF ANSEL,0         ;On met RA0 en analog
-    ;****************************
-    ;* JUSTIFIER DANS LE RAPPORT*
-    ;****************************
-    BANKSEL ADCON0      ; selectionne la banque d'ADCON0
-    MOVLW B'11101001'   ;ADC Frc clock,
-    MOVWF ADCON0    ;on mets W dans ADCON0
-    CALL DELAY      ; Tempo d'attente
-    CLRF jumper
-
-    ;BSF jumper,0
-    ;****************************
-    ;* JUSTIFIER DANS LE RAPPORT*
-    ;****************************
-
-
-GETANAL
-    BSF ADCON0,1    ; SET GO -> Start conversion
-    BTFSC ADCON0,1  ; Is conversion done ?
-    GOTO $-1        ;   NO > test again
-    MOVF ADRESH,0   ; Lecture de la valeur en analogique
-    MOVWF result    ; Stock la valeur dans une variable && AUTISME KHAIM
-
-    CALL JUMP
-    CLRF PORTA
-    BTFSS jumper,0
-    GOTO SHOWBIT
-    GOTO TESTFORDIGITAL
-
-; CODE KAHIM
-SHOWBIT
-    BTFSC result,7  ; 1XX ?
-    GOTO SHOWBIT1XX ;   OUI
-    BTFSC result,6  ; 01X ?
-    GOTO SHOWBIT01X ;   OUI
-    BTFSC result,5  ; 001 ?
-    GOTO $+4        ;   OUI XX-- ----
-            ;   NON : 000
-    BTFSC result,4
-    BSF PORTA,7
-    GOTO GETANAL    ;
-    MOVLW 0xc0
-    MOVWF PORTA
-    GOTO GETANAL
-
-SHOWBIT01X
-    BTFSC result,5  ; 011 ?
-    GOTO $+4        ;   OUI
-    MOVLW 0xe0      ; 010 : XXX- ----
-    MOVWF PORTA
-    GOTO GETANAL
-    MOVLW 0xf0      ; 011 : XXXX ----
-    MOVWF PORTA
-    GOTO GETANAL
-
-SHOWBIT1XX
-    BTFSC result,6  ; 11X ?
-    GOTO SHOWBIT11X ;   OUI
-    BTFSC result,5  ; 101 ?
-    GOTO $+4        ;   OUI
-            ; 100
-    MOVLW 0xf8      ;   NON : XXXX X---
-    MOVWF PORTA     ;
-    GOTO GETANAL
-    MOVLW 0xfc      ; 101
-    MOVWF PORTA
-    GOTO GETANAL
-
-SHOWBIT11X
-    BTFSC result,5  ; 111?
-    GOTO $+4        ;   OUI
-    MOVLW 0xfe      ; NON
-    MOVWF PORTA
-    GOTO GETANAL
-    MOVLW 0xff      ; 111
-    MOVWF PORTA
-    GOTO GETANAL
-
-; CODE BRUNO
-TESTFORDIGITAL
-    ;BSF ADCON0,1    ; On commence la conversion
-    ;BTFSC ADCON0,1  ; La convertion est-elle faite ?
-    ;GOTO $-1        ; conversion pas fini, on attends
-    ;****************************
-    ;* JUSTIFIER DANS LE RAPPORT*
-    ;****************************
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'11100000'   ; W - 225 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT9       ; volume = 9
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'11001001'   ; W - 200 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT8       ; volume = 8
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'10101110'   ; W - 175 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT7       ; volume = 7
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'10010111'   ; W - 150 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT6       ; volume = 6
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'01111100'   ; W - 125 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT5       ; volume = 5
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'01100101'   ; W - 100 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT4       ; volume = 4
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'01001010'   ; W - 75 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT3       ; volume = 3
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'00110011'   ; W - 50 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT2       ; volume = 2
-
-    MOVF ADRESH,0   ; Envoi l'état analogique du potentiometre dans W
-    SUBLW B'00011000'   ; W - 25 => STATUS,0 contiend 0 si W > L et 1 si W <= L
-    BTFSS STATUS,0  ; si W > L on skip
-    GOTO RESULT       ; volume = 1
-
-    MOVLW AD0       ; par défaut, volume = 0
-    GOTO AFFICHER   ; go afficher
-
-RESULT
-    MOVLW AD1
-    GOTO AFFICHER
-RESULT2
-    MOVLW AD2
-    GOTO AFFICHER
-RESULT3
-    MOVLW AD3
-    GOTO AFFICHER
-RESULT4
-    MOVLW AD4
-    GOTO AFFICHER
-RESULT5
-    MOVLW AD5
-    GOTO AFFICHER
-RESULT6
-    MOVLW AD6
-    GOTO AFFICHER
-RESULT7
-    MOVLW AD7
-    GOTO AFFICHER
-RESULT8
-    MOVLW AD8
-    GOTO AFFICHER
-RESULT9
-    MOVLW AD9
-    GOTO AFFICHER
-
-JUMP
-    BTFSS PORTC,0
-    CALL TOGGLE
-    BTFSS PORTC,0
-    CALL DELAY
-    BTFSS PORTC,0
-    GOTO $-2
-    RETURN
-TOGGLE
-    MOVF jumper,0
-    XORLW 0xFF
-    MOVWF jumper
-    RETURN
-
-AFFICHER
-    BANKSEL PORTA   ; selection bank PORTA
-    CLRF PORTA      ; on s'assure que tout est éteind
-    MOVWF PORTA     ; on allume ce qu'il faut
-    GOTO GETANAL   ; retour boucle principale
-
+LOOP
+    BSF PORTC,5		  ; Allume le son
+    BSF PORTA,0		  ; Allume la led 0 pour vérification
+    CALL DELAY		  ; appelle la sous routine delay
+    CALL BOUTONUP         ; appelle la sous routine boutonUP
+    CALL BOUTONDOWN       ; appelle la sous routine boutonDOWN
+    
+    BCF PORTC,5		  ; coupe le son
+    BCF PORTA,0		  ; etined la led 0 pour vérification
+    CALL DELAY		  ; cree un timer de temporisation
+    GOTO LOOP
+    
+;BOUTONUP
+;    BTFSC PORTC,0	; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
+;    GOTO $+3
+;    ;INCFSZ stock1,1     ; allume la led
+;    MOVLW b'00000101'	; ajoute +5 a chaque pression
+;    ADDWF stock1,1	; on ajoute les +5 a stock1
+;    CALL TEMPO		; appelle sous routine temp
+;    BTFSS PORTC,0	; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
+;    GOTO $-2		; on attend que le bouton est relaché
+;    RETURN
+;
+;BOUTONDOWN
+;    BTFSS PORTC,1	; skip si non enfoncé
+;    ;DECFSZ stock1,1	; decrement stock1 skip if 0
+;    GOTO $+3
+;    MOVLW b'00000101'	; ajoute +5 a chaque pression
+;    SUBWF stock1,1	; on ajoute les +5 a stock1
+;    CALL TEMPO		; appelle sous routine temp
+;    BTFSS PORTC,1	; si le bouton est a 1 ( donc pas enfoncé ) OU bouton enfoncé = ligne suivante
+;    GOTO $-2		; on attend que le bouton est relaché
+;    RETURN
+ALLBUTTON
+    
 DELAY
-    MOVLW 0xFF      ; stock 1111 1111 dans le registre de travail
-    MOVWF tempo1    ; envoi le W dans la variable tempo1
-    DECFSZ tempo1,1 ; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
-    GOTO $-1        ; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
-    RETURN          ; retourne et continue après le call qui t'as envoyé ici
-
+    ;MOVLW stock1	; multiplier de tempo1
+    ;MOVWF tempo2	; envoi W dans tempo 2
+    MOVLW 0xFF		; stock 1111 1111 dans le registre de travail
+    MOVWF tempo1	; envoi le W dans la variable tempo1
+    DECFSZ tempo1,1	; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
+    GOTO $-1		; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
+    ;DECFSZ tempo2,1	; decrement tempo2 et skip a 0
+    ;GOTO $-5		; W envoyé donne donc un multiple de 256*200ns
+    RETURN		; retourne et continue après le call qui t'as envoyé ici
+TEMPO
+    MOVLW 0xFF		; stock 1111 1111 dans le registre de travail
+    MOVWF tempo1	; envoi le W dans la variable tempo1
+    DECFSZ tempo1,1	; décremente tempo1 et stock dans tempo1, skip la ligne suivante si 0
+    GOTO $-1		; reviens à la ligne précédente soit 256*4*200ns = 0.000204800 s soit 0.2ms
+    RETURN		; retourne et continue après le call qui t'as envoyé ici
 
     END         ; FIN PROGRAMME
