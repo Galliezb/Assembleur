@@ -22,10 +22,6 @@
 ;*************************************************************************
 ;* Définitions *
 ;*************************************************************************
-;#DEFINE ETAT1 0x01 ; son 1 ( dec 1 )
-;#DEFINE ETAT2 0x05 ; son 4 ( dec 20 )
-;#DEFINE ETAT3 0x0F ; son 6 ( dec 80 )
-;#DEFINE ETAT4 0x1F ; son 8 ( dec 256 )
 #DEFINE ETAT0 0x29 ; son 1
 #DEFINE ETAT1 0x49 ; son 2
 #DEFINE ETAT2 0x69 ; son 3
@@ -62,7 +58,6 @@ START
     CLRF STATUS     ; BANK 0
     BCF PORTC,5     ; INIT BUZZ
     CLRF PORTA      ; INIT LEDS
-;   GOTO BUTTON0       ; CERTIFIED BRUNO  DEVELOPMENT
 
 BUTTON0
     BTFSC PORTC,0   ; si le bouton 0 est PAS enfoncé, on regarde bouton suivant
