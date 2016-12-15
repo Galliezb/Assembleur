@@ -51,13 +51,13 @@ tempo1,tempo2,jumper,result;ici vous pouvez faire vos déclarations de variables
 
 
 START
-    BANKSEL TRISA   ; Selectione la banque ou TRISA se trouve
-    CLRF TRISA      ; mettre le port A en OUTPUT
+    BANKSEL TRISA       ; Selectione la banque ou TRISA se trouve
+    CLRF TRISA          ; mettre le port A en OUTPUT
     BSF TRISC,0         ; On met le bouton 3 ( celui de gauche ) en INPUT
-    BANKSEL ANSEL   ; select bank 4
-    BSF ANSEL,1     ; mettre en analog
+    BANKSEL ANSEL       ; select bank 4
+    BSF ANSEL,1         ; mettre en analog
     MOVLW B'00000001'   ; on met 0 dans W
-    MOVWF jumper    ; init Jumper sur afficheur digital
+    MOVWF jumper        ; init Jumper sur afficheur digital
     ;GOTO CONFDIGITAL
 
 CONFDIGITAL
@@ -69,8 +69,8 @@ CONFDIGITAL
     ;****************************
     ;* JUSTIFIER DANS LE RAPPORT*
     ;****************************
-    MOVWF ADCON1    ;Vdd and Vss comme tension de référence
-    BANKSEL TRISB   ; sélectionne le banque du TRISB
+    MOVWF ADCON1        ;Vdd and Vss comme tension de référence
+    BANKSEL TRISB       ; sélectionne le banque du TRISB
     BSF TRISB,1         ;RB1 ( bouton potentiometrique ) en INPUT
     BANKSEL ANSEL       ;On selectionne la banque ANSEL
     BSF ANSEL,0         ;On met RA0 en analog
@@ -79,8 +79,8 @@ CONFDIGITAL
     ;****************************
     BANKSEL ADCON0      ; selectionne la banque d'ADCON0
     MOVLW B'11101001'   ;ADC Frc clock,
-    MOVWF ADCON0    ;on mets W dans ADCON0
-    CALL DELAY      ; Tempo d'attente
+    MOVWF ADCON0        ;on mets W dans ADCON0
+    CALL DELAY          ; Tempo d'attente
     CLRF jumper
 
     ;BSF jumper,0
