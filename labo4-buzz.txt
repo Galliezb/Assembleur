@@ -113,11 +113,7 @@ ALLUMESON
     RETURN
 
 DELAY
-;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-;   >>>>>>>>>> WORTH IT ? On peut GOTO $-4 avant le call ? Que faire ?<<<<<<<<<<<<<
     MOVFW tmpdelay  ; nécessaire pour si l'on RESTE appuyer
-;   >>>>>>>>>> WORTH IT ? On peut GOTO $-4 avant le call ? Que faire ?<<<<<<<<<<<<<
-
     MOVWF delay     ; envoi le W dans la variable delay
     DECFSZ delay,1  ; décremente delay et stock dans delay, skip la ligne suivante si 0
     GOTO $-1        ; reviens à la ligne précédente (255 fois )
