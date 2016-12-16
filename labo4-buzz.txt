@@ -47,8 +47,8 @@ START
     BANKSEL TRISA   ; Selectione la banque ou TRISA se trouve
     CLRF TRISA      ; mettre le port A en OUTPUT
     CLRF TRISC      ; TRISC = 0
-    BSF TRISC,5     ; TRISC,5 à 1 (input)
-  XORF TRISC      ; TRISC,5(BZ) output et le reste en input
+    MOVLW B'00001111' ; input <3:0> & output <4:7>
+    MOVWF TRISC     ; pour PORTC
 
 ;************* A JUSTIFIER **************************
     BANKSEL ANSEL   ; select bank 4                 *
